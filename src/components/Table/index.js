@@ -4,7 +4,8 @@ import API from '../../utils/API'
 class Table extends React.Component {
     state ={
         resultEmployees: [],
-        filtered: []
+        filtered: [],
+        sorted: false
     }
 
     componentDidMount(){
@@ -24,19 +25,66 @@ class Table extends React.Component {
         this.setState({filtered: filtered})
     }
 
+    sortTable = event => {
+        event.preventDefault();
+        let sorted = this.state.filtered.sort((elementOne, elementTwo) => {
+            let firstComparator = elementOne.name.last.toLowerCase()
+            let secondComparator = elementTwo.name.last.toLowerCase()
+
+            if(firstComparator < secondComparator){
+                if(this.state.sorted){
+                    return 1;
+                }else{
+                    return -1;
+                }
+            }
+            if(firstComparator > secondComparator){
+                if(this.state.sorted){
+                    return -1;
+                }else{
+                    return 1;
+                }
+            }
+
+            return 0;
+        })
+        this.setState({sorted: !this.state.sorted})
+        this.setState({filtered: sorted})
+    }
+
     render(){
         return (
             <>
             <div>
                 <input placeholder="Search our Employees" onChange={this.handleChange}/>
+                <button onClick={this.sortTable}>Sort by Name</button>
             </div>
             <div>
+                
+            </div>
+            <table class="table table-dark">
+        <thead>
+            <tr>
+            <th scope="col">#</th>
+            <th scope="col">First</th>
+            <th scope="col">Last</th>
+            </tr>
+        </thead>
+        <tbody>
                 {
                     this.state.filtered.map(element => (
-                        <h2>Name: {element.name.first} {element.name.last}</h2>
+                        
+                        <tr>
+                        <th scope="row">{element.id.value}</th>
+                        <td> {element.name.first}</td>
+                        <td> {element.name.last}</td>
+                        
+                        </tr>
                     ))
                 }
-            </div>
+        
+        </tbody>
+        </table>
             </>
         )
     }
